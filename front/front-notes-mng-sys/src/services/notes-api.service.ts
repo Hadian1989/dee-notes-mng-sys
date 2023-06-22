@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { INote } from 'models/note';
+import { INote } from 'src/models/note';
+import { INotesApiService } from './notes-api.service.interface';
 
 @Injectable({
   providedIn: 'root',
 })
-export class NotesApiService {
+export class NotesApiService implements INotesApiService {
   baseUrl = '/api/notes';
   constructor(private http: HttpClient) {}
 

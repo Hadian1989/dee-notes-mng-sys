@@ -1,1 +1,36 @@
-<p>notes-list works!</p>
+<div class="container-fluid">
+  <div style="width: 50%">
+    <h1>Notes</h1>
+    <div
+      class="row my-lg-2 mx-lg-3 mx-xl-3 mx-sm-4 mx-md-1 gx-lg-4 gx-md-3 gx-sm-2 g-5 gy-2 align-items-center"
+    >
+      <div
+        class="col-lg-4 col-md-6 col-sm-12 my-2 mx-lg-0 mx-md-0 mx-sm-0 align-self-center"
+      >
+        <div *ngFor="let note of notes$ | async">
+          <p-card
+            header="{{ note.title }}"
+            subheader="{{ note.date_created }}"
+            [style]="{ width: '360px' }"
+          >
+            <ng-template pTemplate="header">
+              <img alt="Card" src="{{ note.image }}" />
+            </ng-template>
+            <p>
+              {{ note.text }}
+            </p>
+            <ng-template pTemplate="footer">
+              <p-button label="Save" icon="pi pi-check"></p-button>
+              <p-button
+                label="Cancel"
+                icon="pi pi-times"
+                styleClass="p-button-secondary"
+                [style]="{ 'margin-left': '.5em' }"
+              ></p-button>
+            </ng-template>
+          </p-card>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
