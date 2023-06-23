@@ -3,16 +3,18 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { INote } from 'src/models/note';
 import { INotesApiService } from './notes-api.service.interface';
+import { environment } from 'src/environments/environment';
+
 
 @Injectable({
   providedIn: 'root',
 })
 export class NotesApiService implements INotesApiService {
-  baseUrl = '/notes';
+  baseUrl = `${environment.apiUrl}/api`;
   constructor(private http: HttpClient) {}
 
   getNotesList$(): Observable<INote[]> {
-    return this.http.get<INote[]>(this.baseUrl);
+    return this.http.get<INote[]>(`${this.baseUrl}/notes/`);
   }
 
   getNoteDetail$(noteId: number): Observable<INote> {

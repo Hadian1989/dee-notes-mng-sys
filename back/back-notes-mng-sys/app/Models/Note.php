@@ -9,7 +9,7 @@ class Note extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'title','text'
+        'title','text','photo'
     ];
     protected $table = 'notes';  
 }
