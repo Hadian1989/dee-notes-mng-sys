@@ -1,100 +1,72 @@
 <?php
 
 namespace App\Http\Controllers;
-use App\Models\Note;
+
 use Illuminate\Http\Request;
-
-
+use App\Models\Note;
 class NoteController extends Controller
-{  /**
-    * Display a listing of the resource.
-    *
-    * @return \Illuminate\Http\Response
-    */
+{
+    /**
+     * Display a listing of the resource.
+     */
     public function index()
     {
-        $notes = Note::orderBy('id','desc')->paginate(5);
-        return view('notes.index', compact('notes'));
+        return Note::all();
     }
 
     /**
-    * Show the form for creating a new resource.
-    *
-    * @return \Illuminate\Http\Response
-    */
-    public function create()
-    {
-        return view('notes.create');
-    }
-
-      /**
-    * Store a newly created resource in storage.
-    *
-    * @param  \Illuminate\Http\Request  $request
-    * @return \Illuminate\Http\Response
-    */
+     * Store a newly created resource in storage.
+     */
     public function store(Request $request)
     {
-        $request->validate([
-            'title' => 'required',
-            'text' => 'required',
-        ]);
-        
-        Note::create($request->post());
-
-        return redirect()->route('notes.index')->with('success','Note has been created successfully.');
+        return Note::create($request->all());
     }
 
- /**
-    * Display the specified resource.
-    *
-    * @param  \App\note  $note
-    * @return \Illuminate\Http\Response
-    */
-    public function show(Note $note)
+    /**
+     * Display the specified resource.
+     */
+    public function show(string $id)
     {
-        return view('notes.show',compact('note'));
-    }
-  /**
-    * Show the form for editing the specified resource.
-    *
-    * @param  \App\Note  $note
-    * @return \Illuminate\Http\Response
-    */
-    public function edit(Note $note)
-    {
-        return view('notes.edit',compact('note'));
+        return Note::find($id);
     }
 
-      /**
-    * Update the specified resource in storage.
-    *
-    * @param  \Illuminate\Http\Request  $request
-    * @param  \App\note  $note
-    * @return \Illuminate\Http\Response
-    */
-    public function update(Request $request, Note $note)
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, string $id)
     {
-        $request->validate([
-            'title' => 'required',
-            'text' => 'required',
-          
-        ]);
-        
-        $note->fill($request->post())->save();
+        if(Note::where('id',$id)->exists()){
+            $note=Note::find($id);
+            $note->title=$request->title;
+            $note->text=$request->text;
+            $note-> save();
+            return response()-> json([
+                "message"=> "record updated successfully"
+            ],200);
 
-        return redirect()->route('notes.index')->with('success','Note Has Been updated successfully');
+        }else{
+            return response()->json([
+                "message"=> "Note not found"
+            ],404);
+        }
     }
 
-        /**
-    * Remove the specified resource from storage.
-    *
-    * @param  \App\Note  $note
-    * @return \Illuminate\Http\Response
-    */
-    public function destroy(Note $note)
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(string $id)
     {
-        $note->delete();
-        return redirect()->route('notes.index')->with('success','Note has been deleted successfully');
+        if(Note::where('id',$id)->exists()){
+            $note=Note::find($id);
+            $note-> delete();
+            return response()-> json([
+                "message"=> "record deleted"
+            ],202);
+
+        }else{
+            return response()->json([
+                "message"=> "Note not found"
+            ],404);
+        }
     }
 }

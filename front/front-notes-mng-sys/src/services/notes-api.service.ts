@@ -8,7 +8,7 @@ import { INotesApiService } from './notes-api.service.interface';
   providedIn: 'root',
 })
 export class NotesApiService implements INotesApiService {
-  baseUrl = '/api/notes';
+  baseUrl = '/notes';
   constructor(private http: HttpClient) {}
 
   getNotesList$(): Observable<INote[]> {

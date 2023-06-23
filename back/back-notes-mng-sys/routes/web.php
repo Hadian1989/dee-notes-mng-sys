@@ -13,12 +13,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-// Route::get('/', function () {
-//     return view('welcome');
-// });
-// use App\Http\Controllers\NoteController;
-use App\Http\Controllers\AngularController;
-Route::any('/{any}', [AngularController::class,'index'])->where('any','^(?!api).*$');
-
- 
-// Route::resource('notes', NoteController::class);
+Route::get('/', function () {
+    return view('welcome');
+});
