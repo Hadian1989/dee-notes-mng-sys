@@ -1,1 +1,66 @@
-<p>note works!</p>
+<!-- Show Note Info Start -->
+<div class="container-fluid my-5" style="width: 50%">
+  <div class="card mx-5 px-4">
+    <div class="flex flex-column card-container">
+      <div class="flex">
+        <h3 style="color: rgb(53, 52, 52)">View Note Detail</h3>
+      </div>
+      <div class="flex h-4rem">
+        <div class="card">
+          <div>
+            <img class="photo-custom" src="{{ note['photo'] }}" />
+          </div>
+          <div>
+            <span style="padding-right: 10px">Title: </span>
+            <b>{{ note["title"] }}</b>
+          </div>
+          <div>
+            <span style="padding-right: 10px">Text: </span>
+            <b> {{ note["text"] | titlecase }}</b>
+          </div>
+        </div>
+      </div>
+      <div class="flex align-items-center justify-content-center h-4rem">
+        <div class="card flex flex-wrap gap-3 justify-content-center">
+          <p-button
+            label="Edit"
+            icon="pi pi-user-edit"
+            (onClick)="editNoteDetail()"
+            styleClass="p-button-raised p-button-text p-button-warning px-3 py-2 p-m-l-1 m-md-2 m-sm-1"
+          ></p-button>
+          <p-button
+            label="Delete"
+            icon="pi pi-trash"
+            (onClick)="deleteNote()"
+            styleClass="p-button-raised p-button-text p-button-danger px-3 py-2 m-lg-3 m-md-2 m-sm-1"
+          ></p-button>
+
+          <p-button
+            label="Notes List"
+            icon="pi pi-users"
+            styleClass="p-button-raised p-button-text px-3 py-2 m-lg-3 m-md-2 m-sm-1"
+            (onClick)="navigateToNotesListPage()"
+          ></p-button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Show Note Info End -->
+<!-- Edit Info Start -->
+<p-dialog
+  header="Edit Note Info"
+  [(visible)]="showEditModal"
+  [style]="{ width: '50vw' }"
+>
+  <app-update-note
+    (isEditingFormFinished)="onSubmitUpdateForm($event)"
+    [note]="this.note"
+  >
+  </app-update-note>
+</p-dialog>
+<!-- Edit Info End -->
+
+<!-- Start toast -->
+<p-toast></p-toast>
+<!-- End toast -->

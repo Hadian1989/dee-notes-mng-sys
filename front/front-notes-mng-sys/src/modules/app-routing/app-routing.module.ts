@@ -1,16 +1,16 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { NoteComponent } from 'src/app/note/note.component';
+import { NotesListComponent } from 'src/app/notes-list/notes-list.component';
 
 export const routes: Routes = [
-  // Redirects the root URL to the 'people' route
+  // Redirects the root URL to the 'notes' route
   { path: '', pathMatch: 'full', redirectTo: '/notes' },
   // Lazily loads the 'PeopleRoutingModule' module for the 'people' route
-  {
-    path: 'notes',
-    loadChildren: () =>
-      import('../notes-routing/notes-routing.module').then((m) => m.NotesRoutingModule),
-  },
-  // Redirects any unknown route to the root URL
+  { path: 'notes', component: NotesListComponent },
+
+  { path: 'note/:note_id', component: NoteComponent }, // Route for the note detail page with a dynamic ID parameter
+
   { path: '*', redirectTo: '' },
 ];
 

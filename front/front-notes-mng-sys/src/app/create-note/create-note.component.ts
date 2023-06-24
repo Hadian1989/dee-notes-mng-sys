@@ -1,57 +1,55 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { INote } from 'src/models/note';
-import { MessageService } from 'primeng/api';
 import { NotesApiService } from 'src/services/notes-api.service';
+import { DialogService } from '../dialog.service';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-create-note',
   templateUrl: './create-note.component.html',
   styleUrls: ['./create-note.component.css'],
 })
-export class CreateNoteComponent {
+export class CreateNoteComponent implements OnInit {
   @Output() isCreateFormDone = new EventEmitter<boolean>();
   noteForm: FormGroup = this.fb.group({
-    id: [''],
     title: [
       '',
-      [Validators.required, Validators.email, Validators.maxLength(20)],
+      [Validators.required, Validators.minLength(3), Validators.maxLength(20)],
     ],
     text: ['', [Validators.required, Validators.minLength(3)]],
-    image: [''],
+    photo: [''],
   });
+  selectedPhoto: File = null;
   constructor(
     private noteApiService: NotesApiService,
     private fb: FormBuilder,
-    private messageService: MessageService,
-    private router: Router
+    private router: Router,
+    private dialogService: DialogService
   ) {}
+  ngOnInit(): void {
+    this.noteForm.patchValue({
+      photo: 'assets/default-cover-photo.jpg',
+    });
+  }
   createNewNote() {
     let note_body_request: Partial<INote> = {
       title: this.noteForm.controls['title'].value,
       text: this.noteForm.controls['text'].value,
-      image: this.noteForm.controls['image'].value,
+      photo: this.noteForm.controls['photo'].value,
     };
 
     this.noteApiService.addNote$(note_body_request).subscribe({
       next: (response) => {
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Success',
-          detail: 'Create Successfully',
-        });
+        this.dialogService.successMessage('Success', 'Create Successfully');
         this.isCreateFormDone.emit(true);
         this.noteForm.reset();
 
         this.router.navigate(['']);
       },
       error: (err) => {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: 'Create Unsuccessfully',
-        });
+        this.dialogService.errorMessage('Error', 'Create Unsuccessfully');
       },
     });
   }
@@ -60,5 +58,31 @@ export class CreateNoteComponent {
     this.isCreateFormDone.emit(true);
     this.noteForm.reset();
     this.router.navigate(['']);
+  }
+  onSelectePhoto(event) {
+    if (event.target.files.length > 0) {
+      this.selectedPhoto = (event.target as HTMLInputElement).files[0];
+    }
+  }
+  onUploadPhoto() {
+    let formData = new FormData();
+    if (this.selectedPhoto) {
+      formData.append('photo', this.selectedPhoto);
+
+      this.noteApiService.uploadNoteCoverPhoto(formData).subscribe({
+        next: (data) => {
+          if (data.success) {
+            this.noteForm.patchValue({ photo: data.info.photo });
+            this.selectedPhoto = null;
+          }
+        },
+        error: (error: HttpErrorResponse) => {
+          this.dialogService.errorMessage(
+            'Error',
+            error.error.errors[0].message
+          );
+        },
+      });
+    }
   }
 }

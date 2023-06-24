@@ -39,6 +39,7 @@ class NoteController extends Controller
             $note=Note::find($id);
             $note->title=$request->title;
             $note->text=$request->text;
+            $photo->photo=$request->photo;
             $note-> save();
             return response()-> json([
                 "message"=> "record updated successfully"

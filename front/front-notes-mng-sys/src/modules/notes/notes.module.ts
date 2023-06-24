@@ -16,6 +16,8 @@ import { ConfirmPopupModule } from 'primeng/confirmpopup';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { UpdateNoteComponent } from 'src/app/update-note/update-note.component';
 import { SharedModule } from '../shared/shared.module';
+import { AppRoutingModule } from '../app-routing/app-routing.module';
+import { ConfirmationService, MessageService } from 'primeng/api';
 
 @NgModule({
   declarations: [
@@ -38,7 +40,8 @@ import { SharedModule } from '../shared/shared.module';
     ToastModule,
     TooltipModule,
     ConfirmPopupModule,
-    SharedModule
+    SharedModule,
+    AppRoutingModule,
   ],
   exports: [
     CommonModule,
@@ -54,6 +57,8 @@ import { SharedModule } from '../shared/shared.module';
     ToastModule,
     TooltipModule,
     ConfirmPopupModule,
+    AppRoutingModule,
   ],
+  providers: [MessageService,ConfirmationService],
 })
 export class NotesModule {}
