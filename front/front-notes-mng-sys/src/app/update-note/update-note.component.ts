@@ -18,7 +18,7 @@ export class UpdateNoteComponent implements OnInit {
     title: ['', [Validators.minLength(3), Validators.maxLength(20)]],
     text: ['', [Validators.minLength(3)]],
     photo: [''],
-    date_created: [''],
+    created_at: [''],
   });
   id_quary: number;
   showEditModal: boolean;
@@ -36,7 +36,7 @@ export class UpdateNoteComponent implements OnInit {
       title: this.note['title'],
       text: this.note['text'],
       photo: this.note['photo'],
-      date_created: this.note['date_created'],
+      created_at: this.note['created_at'],
     });
   }
   updateNoteDetail() {

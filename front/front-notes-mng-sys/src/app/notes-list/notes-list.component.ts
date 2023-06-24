@@ -50,6 +50,16 @@ export class NotesListComponent implements OnInit {
     this.showCreateFormModal = false;
   }
   deleteNote(noteId: number, event: Event) {
+    this.noteApiService.deleteNote$(noteId).subscribe({
+      next: (res) => {
+        this.dialogService.successMessage('Success', 'Delete Successfully');
+
+        this.getNotesList();
+      },
+      error: (err) => {
+        this.dialogService.errorMessage('Error', 'Delete Unsuccessfully');
+      },
+    });
     this.confirmationService.confirm({
       target: event.target!,
       message: 'Are you sure that you want to proceed?',

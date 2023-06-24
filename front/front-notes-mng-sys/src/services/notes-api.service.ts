@@ -35,7 +35,7 @@ export class NotesApiService implements INotesApiService {
    */
 
   deleteNote$(noteId: number): Observable<any> {
-    return this.http.delete(this.baseUrl.concat(`/${noteId}`));
+    return this.http.delete(this.baseUrl.concat(`/note/${noteId}`));
   }
   uploadNoteCoverPhoto(photo: any): Observable<any> {
     return this.http.patch<any>(this.baseUrl.concat(`/note`), photo);

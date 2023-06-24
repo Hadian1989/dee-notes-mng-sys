@@ -1,19 +1,34 @@
-<div class="card">
+<div class="container">
+  <p-toast></p-toast>
   <form [formGroup]="noteForm">
     <div class="formgrid grid">
-      <div>
-        <div class="container">
-          <img
-            src="{{this.noteForm.controls['photo'].value}}"
-            alt="Cover Photo"
-            class="image-custom"
-            width="120px"
-            height="auto"
-          />
-        </div>
-        <div class="p-d-flex p-jc-between">
-          <div class="p-mb-4">
-            <label>
+      <div class="card">
+        <div class="flex flex-column card-container">
+          <div class="flex align-items-center justify-content-center m-1">
+            <div
+              class="container"
+              *ngIf="noteForm.get('photo').value; else uploadImage"
+            >
+              <img
+                src="/assets/{{ this.noteForm.controls['photo'].value.name }}"
+                alt="Cover Photo"
+                class="image-custom"
+                width="100px"
+                height="auto"
+              />
+            </div>
+            <ng-template #uploadImage>
+              <div class="container">
+                <img
+                  src="/assets/default-cover-photo.jpg"
+                  alt="Avatar"
+                  class="image-custom"
+                />
+              </div>
+            </ng-template>
+          </div>
+          <div class="flex align-items-center justify-content-center m-1">
+            <div class="p-mb-4">
               <input
                 type="file"
                 accept="image/* "
@@ -23,113 +38,113 @@
                 onClick="this.value=null"
                 (change)="onSelectePhoto($event)"
                 enyct
-              /> <button
-              pButton
-              pRipple
-              type="button"
-              icon="pi pi-image"
-              class="p-button-rounded p-button-text"
-            ></button>
-              <a
-                ><i class="pi pi-upload p-mx-2"></i
-                ><span style="cursor: pointer"
+              />
+              <a>
+                <i class="pi pi-image p-mx-2"></i>
+                <span style="cursor: pointer; padding: 0 10px"
                   >Choose a cover photo for your note</span
-                ></a
+                >
+              </a>
+            </div>
+          </div>
+          <div class="flex align-items-center justify-content-center m-1">
+            <div class="card">
+              <div class="field col my-2">
+                <label class="mr-2" for="title2">Title: </label>
+                <input
+                  required
+                  formControlName="title"
+                  id="title2"
+                  type="text"
+                  placeholder="Title"
+                  class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full"
+                />
+                <div
+                  class="p-mt-2"
+                  *ngIf="
+                    noteForm.controls['title'].errors &&
+                    (noteForm.controls['title'].touched ||
+                      noteForm.controls['title'].dirty)
+                  "
+                >
+                  <small
+                    class="p-error"
+                    *ngIf="noteForm.controls['title'].hasError('required')"
+                    >*This field is required.
+                  </small>
+                  <small
+                    class="p-error"
+                    *ngIf="
+                      noteForm.controls['title'].hasError('minlength') ||
+                      noteForm.controls['title'].hasError('maxlength')
+                    "
+                  >
+                    Number of Character should be between 2 to 20
+                  </small>
+                </div>
+              </div>
+              <div class="field col my-2">
+                <label class="mr-2" for="text2">Text: </label>
+                <textarea
+                  rows="4"
+                  cols="50"
+                  required
+                  formControlName="text"
+                  id="text2"
+                  placeholder="Text"
+                  type="text"
+                  class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full"
+                ></textarea>
+              </div>
+              <div
+                class="p-mt-2"
+                *ngIf="
+                  noteForm.controls['text'].errors &&
+                  (noteForm.controls['text'].touched ||
+                    noteForm.controls['text'].dirty)
+                "
               >
-            </label>
+                <small
+                  class="p-error"
+                  *ngIf="noteForm.controls['text'].hasError('required')"
+                >
+                  *This field is required.
+                </small>
+                <small
+                  class="p-error"
+                  *ngIf="
+                    noteForm.controls['text'].hasError('minlength') ||
+                    noteForm.controls['text'].hasError('maxlength')
+                  "
+                  >Number of Character should be between 2 to 20
+                </small>
+              </div>
+
+              <div class="row align-items-center mx-2">
+                <div class="col-7"></div>
+                <div class="col-5">
+                  <button
+                    pButton
+                    pRipple
+                    class="p-button-raised p-button-text px-3 py-2 m-1"
+                    type="submit"
+                    (click)="createNewNote()"
+                    label="Save"
+                    [disabled]="!noteForm.valid"
+                  ></button>
+                  <button
+                    pButton
+                    pRipple
+                    class="p-button-raised p-button-text px-3 py-2 m-1"
+                    type="button"
+                    label="Cancel"
+                    (click)="cancelCreateNewNote()"
+                  ></button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-      <div class="field col my-2">
-        <label class="mr-2" for="title2">Title: </label>
-        <input
-          required
-          formControlName="title"
-          id="title2"
-          type="text"
-          placeholder="Title"
-          class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full"
-        />
-        <div
-          class="p-mt-2"
-          *ngIf="
-            noteForm.controls['title'].errors &&
-            (noteForm.controls['title'].touched ||
-              noteForm.controls['title'].dirty)
-          "
-        >
-          <small
-            class="p-error"
-            *ngIf="noteForm.controls['title'].hasError('required')"
-            >*This field is required.
-          </small>
-          <small
-            class="p-error"
-            *ngIf="
-              noteForm.controls['title'].hasError('minlength') ||
-              noteForm.controls['title'].hasError('maxlength')
-            "
-          >
-            Number of Character should be between 2 to 20
-          </small>
-        </div>
-      </div>
-      <div class="field col my-2">
-        <label class="mr-2" for="text2">Text: </label>
-        <textarea
-          rows="4"
-          cols="50"
-          required
-          formControlName="text"
-          id="text2"
-          placeholder="Text"
-          type="text"
-          class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full"
-        ></textarea>
-      </div>
-      <div
-        class="p-mt-2"
-        *ngIf="
-          noteForm.controls['text'].errors &&
-          (noteForm.controls['text'].touched || noteForm.controls['text'].dirty)
-        "
-      >
-        <small
-          class="p-error"
-          *ngIf="noteForm.controls['text'].hasError('required')"
-        >
-          *This field is required.
-        </small>
-        <small
-          class="p-error"
-          *ngIf="
-            noteForm.controls['text'].hasError('minlength') ||
-            noteForm.controls['text'].hasError('maxlength')
-          "
-          >Number of Character should be between 2 to 20
-        </small>
-      </div>
-    </div>
-    <div class="row align-items-center mx-2">
-      <div class="col-7"></div>
-      <div class="col-5">
-        <button
-          pButton
-          pRipple
-          class="p-button-raised p-button-text px-3 py-2 m-2"
-          type="submit"
-          (click)="createNewNote()"
-          label="Save"
-          [disabled]="!noteForm.valid"
-        ></button>
-        <button
-          pButton
-          pRipple
-          class="p-button-raised p-button-text px-3 py-2 m-2"
-          type="button"
-          label="Cancel"
-          (click)="cancelCreateNewNote()"
-        ></button>
       </div>
     </div>
   </form>

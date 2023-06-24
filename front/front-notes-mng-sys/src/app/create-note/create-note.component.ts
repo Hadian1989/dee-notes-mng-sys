@@ -11,7 +11,7 @@ import { HttpErrorResponse } from '@angular/common/http';
   templateUrl: './create-note.component.html',
   styleUrls: ['./create-note.component.css'],
 })
-export class CreateNoteComponent implements OnInit {
+export class CreateNoteComponent {
   @Output() isCreateFormDone = new EventEmitter<boolean>();
   noteForm: FormGroup = this.fb.group({
     title: [
@@ -28,11 +28,7 @@ export class CreateNoteComponent implements OnInit {
     private router: Router,
     private dialogService: DialogService
   ) {}
-  ngOnInit(): void {
-    this.noteForm.patchValue({
-      photo: 'assets/default-cover-photo.jpg',
-    });
-  }
+
   createNewNote() {
     let note_body_request: Partial<INote> = {
       title: this.noteForm.controls['title'].value,
@@ -62,6 +58,10 @@ export class CreateNoteComponent implements OnInit {
   onSelectePhoto(event) {
     if (event.target.files.length > 0) {
       this.selectedPhoto = (event.target as HTMLInputElement).files[0];
+      this.noteForm.patchValue({
+        photo: (event.target as HTMLInputElement).files[0],
+      });
+      console.log(this.noteForm.controls['photo'].value.name);
     }
   }
   onUploadPhoto() {
