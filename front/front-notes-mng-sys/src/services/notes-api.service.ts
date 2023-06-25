@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { INote } from 'src/models/note';
 import { INotesApiService } from './notes-api.service.interface';
@@ -20,12 +20,14 @@ export class NotesApiService implements INotesApiService {
     return this.http.get<INote>(this.baseUrl.concat(`/note/${noteId}`));
   }
 
-  addNote$(body: Partial<INote>): Observable<any> {
-    return this.http.post(this.baseUrl.concat(`/notes`), body);
+  addNote$(body: any): Observable<any> {
+    const headers = new HttpHeaders();
+    return this.http.post(this.baseUrl.concat(`/notes`), body, {
+      headers: headers,
+    });
   }
 
-  updateNote$(body: {}): Observable<any> {
-    let noteId: number = 0;
+  updateNote$(noteId: number, body: FormData): Observable<any> {
     return this.http.patch(this.baseUrl.concat(`/note/${noteId}`), body);
   }
   /**

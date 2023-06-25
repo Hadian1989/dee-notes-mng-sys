@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, ɵafterNextNavigation } from '@angular/router';
 import { INote } from 'src/models/note';
 import { ConfirmationService } from 'primeng/api';
 import { Observable } from 'rxjs';
@@ -17,6 +17,8 @@ export class NotesListComponent implements OnInit {
   notes$: Observable<INote[]>;
   showCreateFormModal: boolean;
   isCreateFormDone: any;
+  imageDirectoryPath: any = 'http://127.0.0.1:8000/storage/images/';
+  isReadMore: boolean;
   constructor(
     private noteApiService: NotesApiService,
     private router: Router,
@@ -28,6 +30,14 @@ export class NotesListComponent implements OnInit {
   }
   getNotesList() {
     this.notes$ = this.noteApiService.getNotesList$();
+    this.noteApiService.getNotesList$().subscribe({
+      next: (res) => {
+        this.notes = res;
+      },
+      error: (err) => {
+        this.dialogService.errorMessage('Error', 'error');
+      },
+    });
   }
 
   onSubmitCreateForm(event: any) {
@@ -90,5 +100,13 @@ export class NotesListComponent implements OnInit {
    */
   onClickUpdateDetail(noteId: number) {
     this.router.navigate([`/note/${noteId}`]);
+  }
+
+  getSpecificTextSize(text: string): string {
+    if (text.length < 110) {
+      return text;
+    } else {
+      return text.substring(0, 100) + ' ...';
+    }
   }
 }

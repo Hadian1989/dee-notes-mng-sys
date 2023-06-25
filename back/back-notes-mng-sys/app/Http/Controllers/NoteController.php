@@ -1,9 +1,11 @@
 <?php
 
 namespace App\Http\Controllers;
-
 use Illuminate\Http\Request;
 use App\Models\Note;
+use GuzzleHttp\Psr7\Response;
+use Illuminate\Support\Facades\Validator;
+
 class NoteController extends Controller
 {
     /**
@@ -11,7 +13,8 @@ class NoteController extends Controller
      */
     public function index()
     {
-        return Note::all();
+        // return Note::all();
+        return Note::orderBy('id')->get();
     }
 
     /**
@@ -19,7 +22,31 @@ class NoteController extends Controller
      */
     public function store(Request $request)
     {
-        return Note::create($request->all());
+        $this->validate($request, [
+            'photo' => ['image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
+        ]);
+        if ($request->hasFile('photo') && !$request->file('photo')->isValid()) {
+            return response()->json('{"error":"please provide an image"}');
+        }
+        try {
+
+            $photo = $request->file('photo');
+            $filename = $photo->getClientOriginalName();
+            $filenameonly = pathinfo($filename, PATHINFO_FILENAME);
+            $extension = $request->file('photo')->getClientOriginalExtension();
+            $completePhoto = str_replace(' ', '_', $filenameonly) . '_' . rand() . '_' . time() . '.' . $extension;
+            $path = $photo->storeAs('public/images', $completePhoto);
+
+            $data = Note::create([
+                'title' => $request->title,
+                'text' => $request->text,
+                'photo' => $completePhoto,
+
+            ]);
+            return response($data);
+        } catch (\Exception $e) {
+            return response()->json($e);
+        }
     }
 
     /**
@@ -35,20 +62,41 @@ class NoteController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        if(Note::where('id',$id)->exists()){
-            $note=Note::find($id);
-            $note->title=$request->title;
-            $note->text=$request->text;
-            $note-> save();
-            return response()-> json([
-                "message"=> "record updated successfully"
-            ],200);
+        if ($request->hasFile('photo') && !$request->file('photo')->isValid()) {
+            return response()->json('{"error":"please provide an image"}');
+        };
+        $this->validate($request, [
 
-        }else{
+            'image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ]);
+        if (Note::where('id', $id)->exists()) {
+            try {
+                $note = Note::find($id);
+                if ($request->hasFile('photo')) {
+                    dd("dshfksjhdk");
+                    $photo = $request->file('photo');
+                    $filename = $photo->getClientOriginalName();
+                    $filenameonly = pathinfo($filename, PATHINFO_FILENAME);
+                    $extension = $request->file('photo')->getClientOriginalExtension();
+
+                    $completePhoto = str_replace(' ', '-', $filenameonly) . '-' . rand() . '-' . time() . '.' . $extension;
+                    
+                    $path = $photo->storeAs('back/back-notes-mng-sys/public/storage/images', $completePhoto);
+                    $note->photo = $path;
+                }
+                $note->title = $request->title;
+                $note->text = $request->text;
+
+                $note->save();
+                return response($note);
+            } catch (\Exception $e) {
+                return response()->json($e);
+            }
+        } else {
             return response()->json([
-                "message"=> "Note not found"
-            ],404);
-        }
+                "message" => "Note not found"
+            ], 404);
+        };
     }
 
     /**
@@ -56,17 +104,16 @@ class NoteController extends Controller
      */
     public function destroy(string $id)
     {
-        if(Note::where('id',$id)->exists()){
-            $note=Note::find($id);
-            $note-> delete();
-            return response()-> json([
-                "message"=> "record deleted"
-            ],202);
-
-        }else{
+        if (Note::where('id', $id)->exists()) {
+            $note = Note::find($id);
+            $note->delete();
             return response()->json([
-                "message"=> "Note not found"
-            ],404);
+                "message" => "record deleted"
+            ], 202);
+        } else {
+            return response()->json([
+                "message" => "Note not found"
+            ], 404);
         }
     }
 }

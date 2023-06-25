@@ -1,4 +1,4 @@
-<div class="container-fluid my-2 p-3" style="width: 90%">
+<div class="container-fluid my-3 px-auto mx-auto" style="width: 90%">
   <div class="card">
     <div
       class="flex flex-wrap align-items-center justify-content-center card-container blue-container"
@@ -22,64 +22,77 @@
       </div>
     </div>
   </div>
-  <div class="card-container">
-    <p-card
-      *ngFor="let note of notes$ | async"
-      header="{{ note.title | titlecase }}"
-      subheader="date: {{ note.created_at | date }}"
-      [style]="{ width: '300px' }"
+  <div class="card">
+    <div class="flex align-content-between flex-wrap card-container">
+      <div
+        class="flex align-items-center justify-content-center"
+        *ngFor="let note of notes$ | async"
+      >
+        <p-card
+          header="{{ note.title | titlecase }}" class="py-0 my-0"
+          subheader="date: {{ note.created_at | date }}"
+          [style]="{ width: '250px', height: '450px' }"
+        >
+          <ng-template pTemplate="header">
+            <img
+              alt="Card"
+              src="{{ imageDirectoryPath }}{{ note.photo }}"
+              width="250px"
+              height="200px"
+            />
+          </ng-template>
+
+          <p>{{ getSpecificTextSize(note.text) }}</p>
+          <ng-template pTemplate="footer" class="py-0 my-0">
+            <div class="card p-0 m-0">
+              <div
+                class="flex flex-wrap align-items-center justify-content-center card-container py-0 my-0"
+              >
+                <div class="mx-auto">
+                  <p-button
+                    icon="pi pi-user"
+                    styleClass="p-button-text"
+                    (onClick)="onClickViewDetail(note.id)"
+                    pTooltip="View more"
+                    tooltipPosition="top"
+                  >
+                  </p-button>
+                </div>
+                <div class="mx-auto">
+                  <p-button
+                    icon="pi pi-file-edit"
+                    styleClass="p-button-help p-button-text"
+                    (onClick)="onClickUpdateDetail(note.id)"
+                    pTooltip="Edit"
+                    tooltipPosition="top"
+                  >
+                  </p-button>
+                </div>
+                <div class="mx-auto">
+                  <p-button
+                    icon="pi pi-trash"
+                    styleClass="p-button-danger p-button-text"
+                    (onClick)="deleteNote(note.id, $event)"
+                    pTooltip="Delete"
+                    tooltipPosition="top"
+                  ></p-button>
+                </div>
+              </div>
+            </div>
+          </ng-template>
+        </p-card>
+      </div>
+    </div>
+
+    <!-- Start Create Note Modal -->
+    <p-dialog
+      header="Create New note"
+      [(visible)]="showCreateFormModal"
+      [style]="{ width: '50vw' }"
     >
-      <ng-template pTemplate="header">
-        <img alt="Card" src="{{ note.photo }}" />
-      </ng-template>
-      <p>{{ note.text }}</p>
-      <ng-template pTemplate="footer">
-        <div class="card">
-          <div
-            class="flex flex-wrap align-items-center justify-content-center card-container blue-container"
-          >
-            <div class="mx-1">
-              <p-button
-                icon="pi pi-user"
-                styleClass="p-button-rounded p-button-text p-button-raised"
-                (onClick)="onClickViewDetail(note.id)"
-                pTooltip="View more"
-                tooltipPosition="top"
-              >
-              </p-button>
-            </div>
-            <div class="mx-1">
-              <p-button
-                icon="pi pi-file-edit"
-                styleClass="p-button-rounded p-button-help p-button-text p-button-raised"
-                (onClick)="onClickUpdateDetail(note.id)"
-                pTooltip="Edit"
-                tooltipPosition="top"
-              >
-              </p-button>
-            </div>
-            <div class="mx-1">
-              <p-button
-                icon="pi pi-trash"
-                styleClass="p-button-rounded p-button-danger p-button-text p-button-raised"
-                (onClick)="deleteNote(note.id, $event)"
-                pTooltip="Delete"
-                tooltipPosition="top"
-              ></p-button>
-            </div>
-          </div>
-        </div>
-      </ng-template>
-    </p-card>
+      <app-create-note (isCreateFormDone)="onSubmitCreateForm($event)">
+      </app-create-note>
+    </p-dialog>
+    <!-- End Create Note Modal -->
   </div>
 </div>
-<!-- Start Create Note Modal -->
-<p-dialog
-  header="Create New note"
-  [(visible)]="showCreateFormModal"
-  [style]="{ width: '50vw' }"
->
-  <app-create-note (isCreateFormDone)="onSubmitCreateForm($event)">
-  </app-create-note>
-</p-dialog>
-<!-- End Create Note Modal -->

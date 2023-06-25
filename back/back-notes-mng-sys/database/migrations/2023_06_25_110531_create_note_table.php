@@ -15,7 +15,7 @@ return new class extends Migration
             $table->increments('id');
             $table->string('title');
             $table->text('text');
-            $table->string('photo')->default('/resources/default-cover-photo.jpg');
+            $table->string('photo')->default('/public/images/default-cover-photo.png');
             $table->timestamps();
         });
     }

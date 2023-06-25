@@ -30,13 +30,14 @@ export class CreateNoteComponent {
   ) {}
 
   createNewNote() {
-    let note_body_request: Partial<INote> = {
-      title: this.noteForm.controls['title'].value,
-      text: this.noteForm.controls['text'].value,
-      photo: this.noteForm.controls['photo'].value,
-    };
+    let formData = new FormData();
+    if (this.selectedPhoto) {
+      formData.append('photo', this.selectedPhoto, this.selectedPhoto.name);
+    }
+    formData.append('title', this.noteForm.controls['title'].value);
+    formData.append('text', this.noteForm.controls['text'].value);
 
-    this.noteApiService.addNote$(note_body_request).subscribe({
+    this.noteApiService.addNote$(formData).subscribe({
       next: (response) => {
         this.dialogService.successMessage('Success', 'Create Successfully');
         this.isCreateFormDone.emit(true);
@@ -55,19 +56,20 @@ export class CreateNoteComponent {
     this.noteForm.reset();
     this.router.navigate(['']);
   }
+
   onSelectePhoto(event) {
     if (event.target.files.length > 0) {
       this.selectedPhoto = (event.target as HTMLInputElement).files[0];
+      this.selectedPhoto = <File>event.target.files[0];
       this.noteForm.patchValue({
         photo: (event.target as HTMLInputElement).files[0],
       });
-      console.log(this.noteForm.controls['photo'].value.name);
     }
   }
   onUploadPhoto() {
     let formData = new FormData();
     if (this.selectedPhoto) {
-      formData.append('photo', this.selectedPhoto);
+      formData.append('photo', this.selectedPhoto, this.selectedPhoto.name);
 
       this.noteApiService.uploadNoteCoverPhoto(formData).subscribe({
         next: (data) => {

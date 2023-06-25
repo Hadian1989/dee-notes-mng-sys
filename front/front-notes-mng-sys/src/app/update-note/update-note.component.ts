@@ -18,11 +18,11 @@ export class UpdateNoteComponent implements OnInit {
     title: ['', [Validators.minLength(3), Validators.maxLength(20)]],
     text: ['', [Validators.minLength(3)]],
     photo: [''],
-    created_at: [''],
   });
   id_quary: number;
   showEditModal: boolean;
   isUpdateFormDone: any;
+  selectedPhoto: File = null;
   constructor(
     private noteApiService: NotesApiService,
     private fb: FormBuilder,
@@ -36,19 +36,22 @@ export class UpdateNoteComponent implements OnInit {
       title: this.note['title'],
       text: this.note['text'],
       photo: this.note['photo'],
-      created_at: this.note['created_at'],
     });
   }
   updateNoteDetail() {
+    let formData = new FormData();
+    if (this.selectedPhoto) {
+      formData.append('photo', this.selectedPhoto, this.selectedPhoto.name);
+    }
     let updated_note = {};
     Object.keys(this.noteForm.controls).forEach((control) => {
       if (this.noteForm.get(control).value) {
-        updated_note[control] = this.noteForm.get(control).value;
+        formData.append(control, this.noteForm.controls[control].value);
       }
     });
-    updated_note['id'] = this.noteForm.get('id').value;
+    let note_id = this.noteForm.get('id').value;
 
-    this.noteApiService.updateNote$(updated_note).subscribe({
+    this.noteApiService.updateNote$(note_id, formData).subscribe({
       next: (res) => {
         this.dialogService.successMessage('Success', 'Update Successfully');
 
@@ -80,10 +83,16 @@ export class UpdateNoteComponent implements OnInit {
     this.noteForm.reset();
     this.router.navigate([`/notes/${this.noteForm.controls['id'].value}`]);
   }
-  onUploadPhoto() {}
+
   onDeleteLogo() {}
-  onSelecteLogo(body: any) {}
+  onSelectePhoto(event) {
+    if (event.target.files.length > 0) {
+      this.selectedPhoto = <File>event.target.files[0];
+      this.noteForm.patchValue({
+        photo: (event.target as HTMLInputElement).files[0],
+      });
+    }
+  }
   edit(body: string) {}
-  selectedLogo: boolean;
   onReject() {}
 }

@@ -1,8 +1,18 @@
-.card-container {
-  display: flex;
-  justify-content: space-between;
+/* .card-container {
   padding: 1rem 2rem;
 }
+
+p-card-footer{
+  display:contents;
+}
+p-card-content{
+  margin: 0px;
+  padding: 0px;
+}
+p-card-header{
+  margin: 0px;
+  padding: 0px;
+} */
 p-card {
-  margin: 20px;
+  margin: 15px;
 }

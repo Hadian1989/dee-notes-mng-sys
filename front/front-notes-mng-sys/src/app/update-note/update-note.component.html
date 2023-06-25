@@ -25,7 +25,7 @@
                 height="70"
                 style="display: none"
                 onClick="this.value=null"
-                (change)="onSelecteLogo($event)"
+                (change)="onSelectePhoto($event)"
                 enyct
               />
               <a
@@ -90,7 +90,6 @@
                   <textarea
                     rows="4"
                     cols="50"
-                    required
                     formControlName="text"
                     id="text2"
                     placeholder="Text"
@@ -107,12 +106,6 @@
                     noteForm.controls['text'].dirty)
                 "
               >
-                <small
-                  class="p-error"
-                  *ngIf="noteForm.controls['text'].hasError('required')"
-                >
-                  *This field is required.
-                </small>
                 <small
                   class="p-error"
                   *ngIf="noteForm.controls['text'].hasError('maxlength')"
