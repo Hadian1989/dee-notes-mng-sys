@@ -1,10 +1,13 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use Illuminate\Http\Request;
 use App\Models\Note;
 use GuzzleHttp\Psr7\Response;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Storage;
+
 
 class NoteController extends Controller
 {
@@ -67,21 +70,27 @@ class NoteController extends Controller
         };
         $this->validate($request, [
 
-            'image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'photo' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
+
+
+
         if (Note::where('id', $id)->exists()) {
             try {
+
                 $note = Note::find($id);
                 if ($request->hasFile('photo')) {
-                    dd("dshfksjhdk");
+                    if ($request->hasFile('photo') && $note->photo) {
+                        Storage::delete($note->photo);
+                    }
                     $photo = $request->file('photo');
                     $filename = $photo->getClientOriginalName();
                     $filenameonly = pathinfo($filename, PATHINFO_FILENAME);
                     $extension = $request->file('photo')->getClientOriginalExtension();
 
                     $completePhoto = str_replace(' ', '-', $filenameonly) . '-' . rand() . '-' . time() . '.' . $extension;
-                    
-                    $path = $photo->storeAs('back/back-notes-mng-sys/public/storage/images', $completePhoto);
+
+                    $path = $photo->storeAs('public/images', $completePhoto);
                     $note->photo = $path;
                 }
                 $note->title = $request->title;
@@ -115,5 +124,17 @@ class NoteController extends Controller
                 "message" => "Note not found"
             ], 404);
         }
+    }
+    public function searchByTitle(Request $request)
+    {
+        $searchTerm = $request->input('title');
+
+        // Perform the search query
+        $notes = Note::where('title', 'LIKE', "%{$searchTerm}%")->get();
+
+        // Pass the results to the view or return a JSON response
+        return view('notes.index', compact('notes'));
+        // Alternatively, you can return a JSON response:
+        // return response()->json($notes);
     }
 }

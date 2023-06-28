@@ -1,8 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Router, ɵafterNextNavigation } from '@angular/router';
 import { INote } from 'src/models/note';
 import { ConfirmationService } from 'primeng/api';
-import { Observable } from 'rxjs';
+import { Observable, concatMap, delay, fromEvent, map, of } from 'rxjs';
 import { NotesApiService } from 'src/services/notes-api.service';
 import { DialogService } from '../dialog.service';
 
@@ -19,6 +19,7 @@ export class NotesListComponent implements OnInit {
   isCreateFormDone: any;
   imageDirectoryPath: any = 'http://127.0.0.1:8000/storage/images/';
   isReadMore: boolean;
+  @ViewChild('input', { static: true }) title: ElementRef;
   constructor(
     private noteApiService: NotesApiService,
     private router: Router,
@@ -27,7 +28,20 @@ export class NotesListComponent implements OnInit {
   ) {}
   ngOnInit(): void {
     this.getNotesList();
+    fromEvent(this.title.nativeElement, 'input')
+      .pipe(
+        map((event) => event as InputEvent),
+        map((item) => (item.target as HTMLInputElement).value),
+        concatMap((item) => of(item).pipe(delay(1000))),
+        concatMap((item) => this.noteApiService.getFilterNoteTitle(item))
+      )
+      .subscribe({
+        next(value) {
+          console.log(value);
+        },
+      });
   }
+  changeFilterKeyword() {}
   getNotesList() {
     this.notes$ = this.noteApiService.getNotesList$();
     this.noteApiService.getNotesList$().subscribe({
@@ -103,7 +117,7 @@ export class NotesListComponent implements OnInit {
   }
 
   getSpecificTextSize(text: string): string {
-    if (text.length < 110) {
+    if (text.length < 100) {
       return text;
     } else {
       return text.substring(0, 100) + ' ...';

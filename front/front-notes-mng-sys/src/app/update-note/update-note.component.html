@@ -7,7 +7,7 @@
           <div class="flex align-items-center justify-content-center m-1">
             <div class="container">
               <img
-                src="/assets/{{ this.noteForm.controls['photo'].value }}"
+              src="{{ imageDirectoryPath }}{{ this.noteForm.controls['photo'].value }}"
                 alt="Cover Photo"
                 class="image-custom"
                 width="100px"
@@ -42,7 +42,7 @@
                 <div>
                   <label class="mr-2" for="title2">Old Title: </label>
                   <span>
-                    {{ this.noteForm.controls["title"].value | titlecase }}
+                    {{ this.note["title"] | titlecase }}
                   </span>
                 </div>
                 <div class="field col my-2">
@@ -81,9 +81,9 @@
               <div class="field col my-2" test-data="text-input">
                 <div>
                   <label class="mr-2" for="text2">Old Text: </label>
-                  <span>
-                    {{ this.noteForm.controls["text"].value | uppercase }}
-                  </span>
+                  <p>
+                    {{ this.note["text"] }}
+                  </p>
                 </div>
                 <div class="field col my-2">
                   <label class="mr-2" for="text">New text: </label>
@@ -113,8 +113,7 @@
                 </small>
               </div>
 
-              <div class="row align-items-center mx-2">
-                <div class="col-7"></div>
+              <div class="row align-items-center m-4">
                 <div class="col-5">
                   <button
                     pButton

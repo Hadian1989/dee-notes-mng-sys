@@ -17,6 +17,7 @@ export class NoteComponent {
   note$: Observable<INote>;
   showEditModal: boolean;
   isUpdateFormDone: any;
+  imageDirectoryPath: any = 'http://127.0.0.1:8000/storage/images/';
 
   constructor(
     private noteApiService: NotesApiService,

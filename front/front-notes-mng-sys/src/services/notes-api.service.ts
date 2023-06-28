@@ -19,6 +19,14 @@ export class NotesApiService implements INotesApiService {
   getNoteDetail$(noteId: number): Observable<INote> {
     return this.http.get<INote>(this.baseUrl.concat(`/note/${noteId}`));
   }
+  getFilterNoteTitle(searchKeyword: string): Observable<any> {
+    return this.http.get<INote[]>(
+      this.baseUrl.concat(`/notes/?search=${searchKeyword}`)
+    );
+  }
+  searchNote$(searchNote: string): Observable<INote> {
+    return this.http.get<INote>(this.baseUrl.concat(`/note/${searchNote}`));
+  }
 
   addNote$(body: any): Observable<any> {
     const headers = new HttpHeaders();

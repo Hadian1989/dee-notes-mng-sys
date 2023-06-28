@@ -23,6 +23,8 @@ export class UpdateNoteComponent implements OnInit {
   showEditModal: boolean;
   isUpdateFormDone: any;
   selectedPhoto: File = null;
+  imageDirectoryPath: any = 'http://127.0.0.1:8000/storage/images/';
+
   constructor(
     private noteApiService: NotesApiService,
     private fb: FormBuilder,
@@ -81,7 +83,7 @@ export class UpdateNoteComponent implements OnInit {
   cancelNoteDetail() {
     this.isEditingFormFinished.emit(true);
     this.noteForm.reset();
-    this.router.navigate([`/notes/${this.noteForm.controls['id'].value}`]);
+    this.router.navigate([`/notes/${this.id_quary}`]);
   }
 
   onDeleteLogo() {}
@@ -94,5 +96,7 @@ export class UpdateNoteComponent implements OnInit {
     }
   }
   edit(body: string) {}
-  onReject() {}
+  onReject() {
+    this.isEditingFormFinished.emit(true);
+  }
 }
