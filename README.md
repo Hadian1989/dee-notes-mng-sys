@@ -29,7 +29,7 @@ user interface of the following functionalities:
 - This will compile the application and host it on a local development server.
 - Open a web browser and visit http://localhost:4200 to see the running Angular application.
 
-  ## How to run the backend app:
+## How to run the backend app:
   You can follow the installation steps from the laravel website: https://laravel.com/docs/10.x/installation
-* you also need to install postgreqsl db in your system through this link: https://www.postgresql.org/download/
+  You also need to install postgreqsl db in your system through this link: https://www.postgresql.org/download/
 
