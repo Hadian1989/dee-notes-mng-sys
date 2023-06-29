@@ -5,15 +5,29 @@
       <div class="card">
         <div class="flex flex-column card-container">
           <div class="flex align-items-center justify-content-center m-1">
-            <div class="container">
+            <div
+              class="container"
+              *ngIf="noteForm.get('photo').value; else uploadImage"
+            >
               <img
-              src="{{ imageDirectoryPath }}{{ this.noteForm.controls['photo'].value }}"
+                src="{{ imageDirectoryPath }}{{
+                  this.noteForm.controls['photo'].value
+                }}"
                 alt="Cover Photo"
                 class="image-custom"
                 width="100px"
                 height="auto"
               />
             </div>
+            <ng-template #uploadImage>
+              <div class="container">
+                <img
+                  src="/assets/default-cover-photo.jpg"
+                  alt="Avatar"
+                  class="image-custom"
+                />
+              </div>
+            </ng-template>
           </div>
 
           <div class="flex align-items-center justify-content-center m-1">
@@ -23,17 +37,9 @@
                 accept="image/* "
                 width="70"
                 height="70"
-                style="display: none"
-                onClick="this.value=null"
                 (change)="onSelectePhoto($event)"
                 enyct
               />
-              <a
-                ><i class="pi pi-upload p-mx-2"></i
-                ><span style="cursor: pointer; padding: 0 10px"
-                  >Choose a cover photo for your note</span
-                ></a
-              >
             </div>
           </div>
           <div class="flex align-items-center justify-content-center m-1">

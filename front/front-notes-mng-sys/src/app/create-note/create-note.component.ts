@@ -1,9 +1,8 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { INote } from 'src/models/note';
 import { NotesApiService } from 'src/services/notes-api.service';
-import { DialogService } from '../dialog.service';
+import { DialogService } from '../../services/dialog.service';
 import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
@@ -11,14 +10,14 @@ import { HttpErrorResponse } from '@angular/common/http';
   templateUrl: './create-note.component.html',
   styleUrls: ['./create-note.component.css'],
 })
-export class CreateNoteComponent {
+export class CreateNoteComponent implements OnInit {
   @Output() isCreateFormDone = new EventEmitter<boolean>();
   noteForm: FormGroup = this.fb.group({
     title: [
       '',
       [Validators.required, Validators.minLength(3), Validators.maxLength(20)],
     ],
-    text: ['', [Validators.required, Validators.minLength(3)]],
+    text: ['', [Validators.minLength(3)]],
     photo: [''],
   });
   selectedPhoto: File = null;
@@ -28,11 +27,16 @@ export class CreateNoteComponent {
     private router: Router,
     private dialogService: DialogService
   ) {}
+  ngOnInit() {
+    this.noteForm.patchValue({
+      photo: 'default-cover-photo.jpg',
+    });
+  }
 
   createNewNote() {
     let formData = new FormData();
     if (this.selectedPhoto) {
-      formData.append('photo', this.selectedPhoto, this.selectedPhoto.name);
+      formData.append('photo', this.selectedPhoto);
     }
     formData.append('title', this.noteForm.controls['title'].value);
     formData.append('text', this.noteForm.controls['text'].value);
@@ -42,7 +46,6 @@ export class CreateNoteComponent {
         this.dialogService.successMessage('Success', 'Create Successfully');
         this.isCreateFormDone.emit(true);
         this.noteForm.reset();
-
         this.router.navigate(['']);
       },
       error: (err) => {
@@ -63,27 +66,6 @@ export class CreateNoteComponent {
       this.selectedPhoto = <File>event.target.files[0];
       this.noteForm.patchValue({
         photo: (event.target as HTMLInputElement).files[0],
-      });
-    }
-  }
-  onUploadPhoto() {
-    let formData = new FormData();
-    if (this.selectedPhoto) {
-      formData.append('photo', this.selectedPhoto, this.selectedPhoto.name);
-
-      this.noteApiService.uploadNoteCoverPhoto(formData).subscribe({
-        next: (data) => {
-          if (data.success) {
-            this.noteForm.patchValue({ photo: data.info.photo });
-            this.selectedPhoto = null;
-          }
-        },
-        error: (error: HttpErrorResponse) => {
-          this.dialogService.errorMessage(
-            'Error',
-            error.error.errors[0].message
-          );
-        },
       });
     }
   }

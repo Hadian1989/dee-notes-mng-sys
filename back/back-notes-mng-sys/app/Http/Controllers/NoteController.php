@@ -32,24 +32,33 @@ class NoteController extends Controller
             return response()->json('{"error":"please provide an image"}');
         }
         try {
+            if ($request->hasFile('photo')) 
+            {
+                $photo = $request->file('photo');
+                $filename = $photo->getClientOriginalName();
+                $filenameonly = pathinfo($filename, PATHINFO_FILENAME);
+                $extension = $request->file('photo')->getClientOriginalExtension();
+                $completePhoto = str_replace(' ', '_', $filenameonly) . '_' . rand() . '_' . time() . '.' . $extension;
+                $path = $photo->storeAs('public/images', $completePhoto);
+                $data = Note::create([
+                    'title' => $request->title,
+                    'text' => $request->text,
+                    'photo' => $completePhoto,
+    
+                ]);
+            } else {
+                    $data = Note::create([
+                    'title' => $request->title,
+                    'text' => $request->text,
+                    ]);
 
-            $photo = $request->file('photo');
-            $filename = $photo->getClientOriginalName();
-            $filenameonly = pathinfo($filename, PATHINFO_FILENAME);
-            $extension = $request->file('photo')->getClientOriginalExtension();
-            $completePhoto = str_replace(' ', '_', $filenameonly) . '_' . rand() . '_' . time() . '.' . $extension;
-            $path = $photo->storeAs('public/images', $completePhoto);
+                    };
+                return response($data);
+            }
 
-            $data = Note::create([
-                'title' => $request->title,
-                'text' => $request->text,
-                'photo' => $completePhoto,
-
-            ]);
-            return response($data);
-        } catch (\Exception $e) {
-            return response()->json($e);
-        }
+         catch (\Exception $e) {
+                 return response()->json($e);
+            }
     }
 
     /**
@@ -72,8 +81,6 @@ class NoteController extends Controller
 
             'photo' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
-
-
 
         if (Note::where('id', $id)->exists()) {
             try {

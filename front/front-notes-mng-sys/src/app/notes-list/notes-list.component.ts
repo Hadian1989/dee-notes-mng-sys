@@ -1,10 +1,20 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { Router, ɵafterNextNavigation } from '@angular/router';
+import { Router } from '@angular/router';
 import { INote } from 'src/models/note';
 import { ConfirmationService } from 'primeng/api';
-import { Observable, concatMap, delay, fromEvent, map, of } from 'rxjs';
+import {
+  BehaviorSubject,
+  Observable,
+  concatMap,
+  debounceTime,
+  delay,
+  distinctUntilChanged,
+  fromEvent,
+  map,
+  of,
+} from 'rxjs';
 import { NotesApiService } from 'src/services/notes-api.service';
-import { DialogService } from '../dialog.service';
+import { DialogService } from '../../services/dialog.service';
 
 @Component({
   selector: 'app-notes-list',
@@ -19,27 +29,23 @@ export class NotesListComponent implements OnInit {
   isCreateFormDone: any;
   imageDirectoryPath: any = 'http://127.0.0.1:8000/storage/images/';
   isReadMore: boolean;
-  @ViewChild('input', { static: true }) title: ElementRef;
+  @ViewChild('title', { static: true }) title: ElementRef;
+  searchKeyword: string;
   constructor(
     private noteApiService: NotesApiService,
     private router: Router,
-    private confirmationService: ConfirmationService,
     private dialogService: DialogService
-  ) {}
+  ) {
+    this.filteredNotes$ = this.searchSubject.pipe(
+      debounceTime(300),
+      distinctUntilChanged(),
+      map((keyword) => this.filterItems(keyword))
+    );
+  }
+  //  concatMap((item) => this.noteApiService.getFilterNoteTitle(item))
+
   ngOnInit(): void {
     this.getNotesList();
-    fromEvent(this.title.nativeElement, 'input')
-      .pipe(
-        map((event) => event as InputEvent),
-        map((item) => (item.target as HTMLInputElement).value),
-        concatMap((item) => of(item).pipe(delay(1000))),
-        concatMap((item) => this.noteApiService.getFilterNoteTitle(item))
-      )
-      .subscribe({
-        next(value) {
-          console.log(value);
-        },
-      });
   }
   changeFilterKeyword() {}
   getNotesList() {
@@ -77,50 +83,42 @@ export class NotesListComponent implements OnInit {
     this.noteApiService.deleteNote$(noteId).subscribe({
       next: (res) => {
         this.dialogService.successMessage('Success', 'Delete Successfully');
-
         this.getNotesList();
       },
       error: (err) => {
         this.dialogService.errorMessage('Error', 'Delete Unsuccessfully');
       },
     });
-    this.confirmationService.confirm({
-      target: event.target!,
-      message: 'Are you sure that you want to proceed?',
-      icon: 'pi pi-exclamation-triangle',
-      accept: () => {
-        this.noteApiService.deleteNote$(noteId).subscribe({
-          next: (res) => {
-            this.dialogService.successMessage('Success', 'Delete Successfully');
-
-            this.getNotesList();
-          },
-          error: (err) => {
-            this.dialogService.errorMessage('Error', 'Delete Unsuccessfully');
-          },
-        });
-      },
-      reject: () => {
-        this.dialogService.errorMessage('Rejected', 'You have rejected');
-      },
-    });
-  }
-  onClickViewDetail(noteId: number) {
-    this.router.navigate([`/note/${noteId}`]);
   }
   /**
    * Navigates to the edit page of a note with the specified ID.
    * @param noteId The ID of the note
    */
-  onClickUpdateDetail(noteId: number) {
+  onClickViewAndUpdateDetail(noteId: number) {
     this.router.navigate([`/note/${noteId}`]);
   }
 
-  getSpecificTextSize(text: string): string {
-    if (text.length < 100) {
+  getSpecificTextSize(text: string | null): string {
+    if (text?.length < 100) {
       return text;
     } else {
       return text.substring(0, 100) + ' ...';
     }
+  }
+  private searchSubject = new BehaviorSubject<string>('');
+  filteredNotes$: Observable<INote[]>;
+
+  search() {
+    this.searchSubject.next(this.searchKeyword);
+  }
+
+  filterItems(keyword: string): INote[] {
+    if (!keyword) {
+      return this.notes;
+    }
+    keyword = keyword.toLowerCase();
+    return this.notes.filter((item) =>
+      item.title?.toLowerCase().includes(keyword)
+    );
   }
 }

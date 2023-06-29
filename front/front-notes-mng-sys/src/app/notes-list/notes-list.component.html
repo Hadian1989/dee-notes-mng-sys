@@ -1,5 +1,5 @@
-<div class="container-fluid my-3 align-items-center">
-  <div class="card">
+<div class="container-fluid m-3 align-items-center">
+  <div class="card m-2">
     <div
       class="flex flex-wrap align-items-center justify-content-center card-container"
     >
@@ -21,15 +21,21 @@
         </p-button>
       </div>
     </div>
-  </div>
-  <div class="card">
-    <input type="text" #title />
+    <div class="row">
+      <input
+        type="text"
+        style="width: 50%; height: 25px"
+        [(ngModel)]="searchKeyword"
+        (keyup)="search()"
+        placeholder="Search by Title"
+      />
+    </div>
   </div>
   <div class="card">
     <div class="flex align-content-between flex-wrap card-container">
       <div
         class="flex align-items-center justify-content-center"
-        *ngFor="let note of notes$ | async"
+        *ngFor="let note of filteredNotes$ | async"
       >
         <p-card class="p-col-4">
           <ng-template pTemplate="header">
@@ -46,34 +52,26 @@
               {{ note.title | titlecase }}
             </div>
             <div class="card-subheader">date: {{ note.created_at | date }}</div>
-            <p>{{ getSpecificTextSize(note.text) }}</p>
+            <p style="height: 80px">
+              {{ getSpecificTextSize(note.text ? note.text : "") }}
+            </p>
           </ng-template>
-          <ng-template pTemplate="footer" class="pt-0">
+          <ng-template pTemplate="footer">
             <div class="card">
               <div
-                class="flex flex-wrap align-items-center justify-content-center card-container py-0 my-0"
+                class="flex flex-wrap align-items-center justify-content-center card-container"
               >
-                <div class="mx-auto">
-                  <p-button
-                    icon="pi pi-user"
-                    styleClass="p-button-text"
-                    (onClick)="onClickViewDetail(note.id)"
-                    pTooltip="View more"
-                    tooltipPosition="top"
-                  >
-                  </p-button>
-                </div>
-                <div class="mx-auto">
+                <div class="mx-1">
                   <p-button
                     icon="pi pi-file-edit"
-                    styleClass="p-button-secondary p-button-text"
-                    (onClick)="onClickUpdateDetail(note.id)"
-                    pTooltip="Edit"
+                    styleClass="p-button-secondary p-button-text "
+                    (onClick)="onClickViewAndUpdateDetail(note.id)"
+                    pTooltip="View and Edit"
                     tooltipPosition="top"
                   >
                   </p-button>
                 </div>
-                <div class="mx-auto">
+                <div class="mx-1">
                   <p-button
                     icon="pi pi-trash"
                     styleClass="p-button-danger p-button-text"

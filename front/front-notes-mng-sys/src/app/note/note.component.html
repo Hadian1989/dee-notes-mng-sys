@@ -1,17 +1,27 @@
 <!-- Show Note Info Start -->
 
-
-
-<div class="container-fluid" style="width: 50%; align-items: center;">
+<div class="container-fluid" style="width: 50%; align-items: center">
   <div class="my-2 p-2">
-    <div class="card ">
+    <div class="card">
       <div class="flex flex-column card-container">
         <div class="flex align-items-start justify-content-start">
           <h3 style="color: rgb(53, 52, 52)">View Note Detail</h3>
         </div>
+
         <div class="flex align-items-center justify-content-center m-3">
-          <img src="{{ imageDirectoryPath }}{{ note.photo }}" />
+          <div *ngIf="this.note['photo']; else uploadImage">
+            
+            <img src="{{ imageDirectoryPath }}{{ note.photo }}" />
+          </div>
+          <ng-template #uploadImage>
+            <img
+              src="/assets/default-cover-photo.jpg"
+              alt="Avatar"
+              class="image-custom"
+            />
+          </ng-template>
         </div>
+
         <div class="flex align-items-start justify-content-start mx-2">
           <b>{{ note["title"] | titlecase }}</b>
         </div>

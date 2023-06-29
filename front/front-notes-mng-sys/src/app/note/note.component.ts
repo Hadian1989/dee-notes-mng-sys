@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { INote } from 'src/models/note';
 import { NotesApiService } from 'src/services/notes-api.service';
-import { DialogService } from '../dialog.service';
+import { DialogService } from '../../services/dialog.service';
 
 @Component({
   selector: 'app-note',
@@ -61,6 +61,6 @@ export class NoteComponent {
   onSubmitUpdateForm(event: any) {
     this.isUpdateFormDone = event;
     this.showEditModal = false;
-    this.getNoteDetails(); // Fetch the updated person's detail after form submission
+    this.getNoteDetails(); // Fetch the updated note's detail after form submission
   }
 }

@@ -3,7 +3,8 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { INote } from 'src/models/note';
 import { NotesApiService } from 'src/services/notes-api.service';
-import { DialogService } from '../dialog.service';
+import { DialogService } from '../../services/dialog.service';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-update-note',
@@ -41,19 +42,19 @@ export class UpdateNoteComponent implements OnInit {
     });
   }
   updateNoteDetail() {
-    let formData = new FormData();
     if (this.selectedPhoto) {
-      formData.append('photo', this.selectedPhoto, this.selectedPhoto.name);
+      let formData = new FormData();
+      formData.append('photo', this.selectedPhoto);
     }
     let updated_note = {};
     Object.keys(this.noteForm.controls).forEach((control) => {
       if (this.noteForm.get(control).value) {
-        formData.append(control, this.noteForm.controls[control].value);
+        updated_note[control] = this.noteForm.get(control).value;
       }
     });
     let note_id = this.noteForm.get('id').value;
 
-    this.noteApiService.updateNote$(note_id, formData).subscribe({
+    this.noteApiService.updateNote$(note_id, updated_note).subscribe({
       next: (res) => {
         this.dialogService.successMessage('Success', 'Update Successfully');
 
@@ -61,7 +62,7 @@ export class UpdateNoteComponent implements OnInit {
         this.noteForm.reset();
         this.router.navigate([`/notes/${this.noteForm.controls['id'].value}`]);
       },
-      error: (err) => {
+      error: (err: HttpErrorResponse) => {
         this.dialogService.errorMessage('Error', 'Update Unsuccessfully');
       },
     });
@@ -78,7 +79,7 @@ export class UpdateNoteComponent implements OnInit {
   onSubmitUpdateForm(event: any) {
     this.isUpdateFormDone = event;
     this.showEditModal = false;
-    this.getNoteDetails(); // Fetch the updated person's detail after form submission
+    this.getNoteDetails(); // Fetch the updated note's detail after form submission
   }
   cancelNoteDetail() {
     this.isEditingFormFinished.emit(true);

@@ -24,9 +24,6 @@ export class NotesApiService implements INotesApiService {
       this.baseUrl.concat(`/notes/?search=${searchKeyword}`)
     );
   }
-  searchNote$(searchNote: string): Observable<INote> {
-    return this.http.get<INote>(this.baseUrl.concat(`/note/${searchNote}`));
-  }
 
   addNote$(body: any): Observable<any> {
     const headers = new HttpHeaders();
@@ -35,7 +32,7 @@ export class NotesApiService implements INotesApiService {
     });
   }
 
-  updateNote$(noteId: number, body: FormData): Observable<any> {
+  updateNote$(noteId: number, body: any): Observable<any> {
     return this.http.patch(this.baseUrl.concat(`/note/${noteId}`), body);
   }
   /**
@@ -47,10 +44,5 @@ export class NotesApiService implements INotesApiService {
   deleteNote$(noteId: number): Observable<any> {
     return this.http.delete(this.baseUrl.concat(`/note/${noteId}`));
   }
-  uploadNoteCoverPhoto(photo: any): Observable<any> {
-    return this.http.patch<any>(this.baseUrl.concat(`/note`), photo);
-  }
-  deleteNoteCoverPhoto(noteId: number): Observable<any> {
-    return this.http.delete<any>(this.baseUrl.concat(`/note/${noteId}`));
-  }
+
 }
