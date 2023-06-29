@@ -5,13 +5,9 @@ import { ConfirmationService } from 'primeng/api';
 import {
   BehaviorSubject,
   Observable,
-  concatMap,
   debounceTime,
-  delay,
   distinctUntilChanged,
-  fromEvent,
   map,
-  of,
 } from 'rxjs';
 import { NotesApiService } from 'src/services/notes-api.service';
 import { DialogService } from '../../services/dialog.service';
@@ -29,7 +25,6 @@ export class NotesListComponent implements OnInit {
   isCreateFormDone: any;
   imageDirectoryPath: any = 'http://127.0.0.1:8000/storage/images/';
   isReadMore: boolean;
-  @ViewChild('title', { static: true }) title: ElementRef;
   searchKeyword: string;
   constructor(
     private noteApiService: NotesApiService,
@@ -42,17 +37,15 @@ export class NotesListComponent implements OnInit {
       map((keyword) => this.filterItems(keyword))
     );
   }
-  //  concatMap((item) => this.noteApiService.getFilterNoteTitle(item))
 
   ngOnInit(): void {
     this.getNotesList();
   }
-  changeFilterKeyword() {}
   getNotesList() {
-    this.notes$ = this.noteApiService.getNotesList$();
     this.noteApiService.getNotesList$().subscribe({
       next: (res) => {
         this.notes = res;
+        this.filterItems(null);
       },
       error: (err) => {
         this.dialogService.errorMessage('Error', 'error');

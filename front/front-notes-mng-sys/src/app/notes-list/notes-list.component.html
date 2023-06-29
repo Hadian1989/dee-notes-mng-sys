@@ -39,16 +39,27 @@
       >
         <p-card class="p-col-4">
           <ng-template pTemplate="header">
-            <img
-              alt="Card"
-              src="{{ imageDirectoryPath }}{{ note.photo }}"
-              width="250px"
-              height="200px"
-            />
+            
+            <div *ngIf="note['photo']; else uploadImage">
+              <img
+                alt="Card dfgdfgdf"
+                src="{{ imageDirectoryPath }}{{ note.photo }}"
+                width="250px"
+                height="200px"
+              />
+            </div>
+            <ng-template #uploadImage>
+              <img
+                src="/assets/default.jpg"
+                alt="Avatar"
+                class="image-custom"
+              />
+            </ng-template>
           </ng-template>
 
           <ng-template pTemplate="content">
             <div class="card-header">
+              {{note['photo']}}
               {{ note.title | titlecase }}
             </div>
             <div class="card-subheader">date: {{ note.created_at | date }}</div>

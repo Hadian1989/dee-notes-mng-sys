@@ -69,25 +69,22 @@ export class UpdateNoteComponent implements OnInit {
   }
   getNoteDetails() {
     this.noteApiService.getNoteDetail$(this.id_quary).subscribe({
-      next: (res) => {},
+      next: (res) => {
+
+      },
       error: (err) => {
         console.log(err),
           this.dialogService.errorMessage('Error', 'Error getting note detail');
       },
     });
   }
-  onSubmitUpdateForm(event: any) {
-    this.isUpdateFormDone = event;
-    this.showEditModal = false;
-    this.getNoteDetails(); // Fetch the updated note's detail after form submission
-  }
+
   cancelNoteDetail() {
     this.isEditingFormFinished.emit(true);
     this.noteForm.reset();
     this.router.navigate([`/notes/${this.id_quary}`]);
   }
 
-  onDeleteLogo() {}
   onSelectePhoto(event) {
     if (event.target.files.length > 0) {
       this.selectedPhoto = <File>event.target.files[0];
@@ -96,7 +93,6 @@ export class UpdateNoteComponent implements OnInit {
       });
     }
   }
-  edit(body: string) {}
   onReject() {
     this.isEditingFormFinished.emit(true);
   }

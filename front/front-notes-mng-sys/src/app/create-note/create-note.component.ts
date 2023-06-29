@@ -43,12 +43,12 @@ export class CreateNoteComponent implements OnInit {
 
     this.noteApiService.addNote$(formData).subscribe({
       next: (response) => {
-        this.dialogService.successMessage('Success', 'Create Successfully');
         this.isCreateFormDone.emit(true);
         this.noteForm.reset();
         this.router.navigate(['']);
       },
       error: (err) => {
+        this.dialogService.successMessage('Success', 'Create Successfully');
         this.dialogService.errorMessage('Error', 'Create Unsuccessfully');
       },
     });
