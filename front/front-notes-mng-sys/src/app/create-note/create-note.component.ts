@@ -29,7 +29,7 @@ export class CreateNoteComponent implements OnInit {
   ) {}
   ngOnInit() {
     this.noteForm.patchValue({
-      photo: 'default-cover-photo.jpg',
+      photo: 'default.jpg',
     });
   }
 

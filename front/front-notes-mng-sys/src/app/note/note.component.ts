@@ -47,8 +47,8 @@ export class NoteComponent {
   deleteNote() {
     this.noteApiService.deleteNote$(this.note_id).subscribe({
       next: (res: {}) => {
+        this.navigateToNotesListPage(); // Navigate back to the notes list page
         this.dialogService.successMessage('Success', 'Delete successfully');
-        this.navigateToNotesListPage(); // Navigate back to the people list page
       },
       error: (err: HttpErrorResponse) => {
         this.dialogService.errorMessage('Error', 'Delete Unsuccessfully');

@@ -6,7 +6,7 @@ import { NotesListComponent } from 'src/app/notes-list/notes-list.component';
 export const routes: Routes = [
   // Redirects the root URL to the 'notes' route
   { path: '', pathMatch: 'full', redirectTo: '/notes' },
-  // Lazily loads the 'PeopleRoutingModule' module for the 'people' route
+  // Lazily loads the 'NotesRoutingModule' module for the 'notes' route
   { path: 'notes', component: NotesListComponent },
 
   { path: 'note/:note_id', component: NoteComponent }, // Route for the note detail page with a dynamic ID parameter
